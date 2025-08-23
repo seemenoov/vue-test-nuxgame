@@ -1,12 +1,24 @@
 <script setup lang="ts"></script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit
-    <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to
-    read the documentation
-  </p>
+  <main class="layout">
+    <div class="layout__content">
+      <Router-View />
+    </div>
+  </main>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  justify-content: center;
+
+  &__content {
+    width: 100%;
+  }
+}
+</style>
