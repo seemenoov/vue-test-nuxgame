@@ -1,39 +1,45 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import BaseInput from "@/components/Base/BaseInput.vue";
 import BaseButton from "@/components/Base/BaseButton.vue";
 import { useFetch } from "@/composables/useFetch";
+import { type User } from "@/types/user";
+import { normalizePhone } from "@/utils/normalize";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-const { data, fetchData } = useFetch<any[]>();
+const { data, fetchData } = useFetch<User[]>();
 
-const username = ref("Clementine Bauch");
-const phone = ref("1-463-123-4447");
-const error = ref("");
+const username = ref<string>("Clementine Bauch");
+const phone = ref<string>("1-463-123-4447");
+const error = ref<string>("");
 
-const login = async () => {
+const login = async (): Promise<void> => {
   error.value = "";
   if (!username.value.length && !phone.value.length) return;
 
   await fetchData("/users");
 
   const targetUser = data.value?.find((user) => {
-    if (username.value === user?.name && phone.value === user?.phone) {
+    if (
+      username.value === user?.name &&
+      normalizePhone(phone.value) === normalizePhone(user?.phone)
+    ) {
       return user;
     }
   });
 
   if (!targetUser) {
-    error.value = "Login Invalid";
+    error.value = "Login Error";
     setTimeout(() => {
       error.value = "";
     }, 5000);
+
     return;
   }
 
-  router.push("/info");
+  router.push({ path: "/info", query: { id: targetUser.id } });
 };
 </script>
 

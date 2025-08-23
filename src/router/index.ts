@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Login from "@/views/Login.vue";
-import Info from "@/views/Info.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,12 +7,17 @@ const router = createRouter({
     {
       path: "/login",
       name: "login",
-      component: Login,
+      component: () => import("@/pages/Login.vue"),
     },
     {
       path: "/info",
       name: "info",
-      component: Info,
+      component: () => import("@/pages/Info.vue"),
+      beforeEnter: (to, from) => {
+        if (!to.query?.id) {
+          router.push("/login");
+        }
+      },
     },
   ],
 });
