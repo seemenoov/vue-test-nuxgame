@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed, watch, reactive } from "vue";
 import { useFetch } from "@/composables/useFetch";
 import { useRoute, useRouter } from "vue-router";
 import { type User } from "@/types/user";
 import { type Todo } from "@/types/todo";
 import BaseInput from "@/components/Base/BaseInput.vue";
 import BaseButton from "@/components/Base/BaseButton.vue";
+import BaseModal from "@/components/Base/BaseModal.vue";
 
 import TodoList from "@/components/Todo/TodoList.vue";
 
 type Status = "all" | "completed" | "uncompleted" | "favorites";
 type SelectedUser = "all" | number;
 
-const router = useRouter();
 const route = useRoute();
 
 const id: number = +route.query?.id!;
@@ -23,12 +23,16 @@ const { data: todos, fetchData: getTodos } = useFetch<Todo[]>();
 const search = ref<string>("");
 const selectedStatus = ref<Status>("all");
 const selectedUser = ref<SelectedUser>("all");
+const showModal = ref<boolean>(false);
+const todo = reactive({
+  title: "",
+  userId: "",
+});
 
 const statusList: Status[] = ["all", "completed", "uncompleted", "favorites"];
 
 onMounted(async () => {
-  await getUsers("/users");
-  await getTodos("/todos");
+  await Promise.all([getUsers("/users"), getTodos("/todos")]);
 });
 
 const formatAddress = (user: User): string =>
@@ -88,15 +92,20 @@ const profileItems = computed(() => {
   ];
 });
 
-const createTodo = () => {
-  const obj = {
-    title: "TEST",
-    userId: 999,
+const createTodo = (title: string, userId: string): void => {
+  const data: Todo = {
+    id: todos.value?.length + 1,
+    completed: false,
+    title,
+    userId: +userId,
   };
 
-  todos.value?.push(obj);
+  todos.value?.push(data);
+  closeModal();
+};
 
-  console.log(todos.value);
+const closeModal = () => {
+  showModal.value = false;
 };
 </script>
 
@@ -141,7 +150,10 @@ const createTodo = () => {
                 {{ user }}
               </option>
             </select>
-            <BaseButton @click="createTodo" class="info-page__create">
+            <BaseButton
+              @click="showModal = !showModal"
+              class="info-page__create"
+            >
               Create ToDo
             </BaseButton>
           </div>
@@ -160,6 +172,22 @@ const createTodo = () => {
       </div>
     </div>
   </div>
+  <BaseModal :show="showModal" @close="closeModal">
+    <form
+      @submit.prevent="createTodo(todo.title, todo.userId)"
+      class="modal-form"
+    >
+      <h2>Create ToDo</h2>
+      <BaseInput required v-model="todo.title" placeholder="Title"></BaseInput>
+      <BaseInput
+        :filter="/\D+/g"
+        required
+        v-model="todo.userId"
+        placeholder="UserId"
+      ></BaseInput>
+      <BaseButton full-width type="submit"> Submit </BaseButton>
+    </form>
+  </BaseModal>
 </template>
 
 <style lang="scss">
@@ -247,6 +275,20 @@ const createTodo = () => {
     padding: 10px 14px;
     font-size: 14px;
     border: 1px solid grey;
+  }
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  h2 {
+    margin-bottom: 8px;
+  }
+
+  .input {
+    border-color: grey;
   }
 }
 </style>
