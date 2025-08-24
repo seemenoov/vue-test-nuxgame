@@ -1,39 +1,31 @@
 # vue-test-nuxgame
 
-This template should help get you started developing with Vue 3 in Vite.
+# 🎬 NUXGAME Test Task
 
-## Recommended IDE Setup
+A small SPA with login/auth, a protected user profile page, and a todo list with filtering and create, built with **Vue 3**, **TypeScript**, and **Vite**.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+---
 
-## Type Support for `.vue` Imports in TS
+## 🛠️ Tech Stack
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- Vue 3 (Composition API)
+- TypeScript
+- Vite
+- SCSS
 
-## Customize configuration
+---
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## ⚙️ Requirements
 
-## Project Setup
+- **Node.js** `>= 20.0.0` (recommended: `22.x`)
+- **npm** `>= 9.6.0`
 
-```sh
+---
+
+## 📦 Getting Started
+
+```bash
+git https://github.com/seemenoov/vue-test-nuxgame.git
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
 ```
