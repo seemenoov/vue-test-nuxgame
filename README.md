@@ -1,6 +1,6 @@
 # vue-test-nuxgame
 
-# 🎬 NUXGAME Test Task
+# NUXGAME Test Task
 
 A small SPA with login/auth, a protected user profile page, and a todo list with filtering and create, built with **Vue 3**, **TypeScript**, and **Vite**.
 
