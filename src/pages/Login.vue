@@ -66,7 +66,7 @@ const login = async (): Promise<void> => {
                   required
                   type="tel"
                   placeholder="Phone Number"
-                  :filter="/[^0-9+\-().\s]/g"
+                  :filter="/[^0-9+\-().\sxX]/g"
                   v-model="phone"
                 />
               </div>

@@ -19,6 +19,7 @@ const id: number = +route.query?.id!;
 
 const { data: users, fetchData: getUsers } = useFetch<User[]>();
 const { data: todos, fetchData: getTodos } = useFetch<Todo[]>();
+const { data: response, fetchData: postTodo } = useFetch<any>();
 
 const search = ref<string>("");
 const selectedStatus = ref<Status>("all");
@@ -92,16 +93,28 @@ const profileItems = computed(() => {
   ];
 });
 
-const createTodo = (title: string, userId: string): void => {
-  const data: Todo = {
-    id: todos.value?.length + 1,
-    completed: false,
-    title,
-    userId: +userId,
-  };
+const createTodo = async (title: string, userId: string): Promise<void> => {
+  try {
+    await postTodo("/todos", {
+      method: "POST",
+      body: JSON.stringify({ userId, title }),
+    });
 
-  todos.value?.push(data);
-  closeModal();
+    if (response.value?.id) {
+      const data: Todo = {
+        id: todos.value?.length + 1,
+        completed: false,
+        title,
+        userId: +userId,
+      };
+
+      todos.value?.push(data);
+    }
+  } catch (e) {
+    console.log(e);
+  } finally {
+    closeModal();
+  }
 };
 
 const closeModal = () => {
@@ -193,7 +206,7 @@ const closeModal = () => {
 <style lang="scss">
 .info-page {
   &__content {
-    max-width: 650px;
+    max-width: 750px;
     width: 100%;
 
     margin: 0 auto;
