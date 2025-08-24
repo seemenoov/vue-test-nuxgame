@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch, reactive } from "vue";
+import { ref, onMounted, computed, reactive } from "vue";
 import { useFetch } from "@/composables/useFetch";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { type User } from "@/types/user";
 import { type Todo } from "@/types/todo";
 import BaseInput from "@/components/Base/BaseInput.vue";
@@ -14,18 +14,17 @@ type Status = "all" | "completed" | "uncompleted" | "favorites";
 type SelectedUser = "all" | number;
 
 const route = useRoute();
-
 const id: number = +route.query?.id!;
 
 const { data: users, fetchData: getUsers } = useFetch<User[]>();
 const { data: todos, fetchData: getTodos } = useFetch<Todo[]>();
-const { data: response, fetchData: postTodo } = useFetch<any>();
+const { data: response, fetchData: postTodo } = useFetch<{ id: number }>();
 
 const search = ref<string>("");
 const selectedStatus = ref<Status>("all");
 const selectedUser = ref<SelectedUser>("all");
 const showModal = ref<boolean>(false);
-const todo = reactive({
+const todo = reactive<{ title: string; userId: string }>({
   title: "",
   userId: "",
 });
@@ -50,16 +49,21 @@ const allUsers = computed<number[] | []>(() => {
 });
 
 const list = computed<Todo[]>(() => {
+  const items = todos.value ?? [];
+
   switch (selectedStatus.value) {
     case "completed":
-      return todos.value?.filter((todo) => todo.completed);
+      return items.filter((todo) => todo.completed);
     case "uncompleted":
-      return todos.value?.filter((todo) => !todo.completed);
+      return items.filter((todo) => !todo.completed);
     case "favorites":
-      return todos.value?.filter((todo) => !todo.completed);
+      const arr = JSON.parse(
+        localStorage.getItem("favorite") ?? "[]"
+      ) as number[];
+      return items.filter((todo) => arr.includes(todo.id));
 
     default:
-      return todos.value;
+      return items;
   }
 });
 
@@ -70,7 +74,7 @@ const filteredTodos = computed<Todo[] | []>(() => {
 
   if (selectedUser.value !== "all") {
     const uid = +selectedUser.value;
-    filteredArr = list.value.filter((t) => t.userId === uid);
+    filteredArr = list.value.filter((item) => item.userId === uid);
   }
 
   const query = search.value?.trim().toLowerCase();
@@ -102,7 +106,7 @@ const createTodo = async (title: string, userId: string): Promise<void> => {
 
     if (response.value?.id) {
       const data: Todo = {
-        id: todos.value?.length + 1,
+        id: (todos.value?.length ?? 0) + 1,
         completed: false,
         title,
         userId: +userId,
@@ -113,11 +117,13 @@ const createTodo = async (title: string, userId: string): Promise<void> => {
   } catch (e) {
     console.log(e);
   } finally {
+    todo.title = "";
+    todo.userId = "";
     closeModal();
   }
 };
 
-const closeModal = () => {
+const closeModal = (): void => {
   showModal.value = false;
 };
 </script>

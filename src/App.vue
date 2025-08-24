@@ -1,5 +1,3 @@
-<script setup lang="ts"></script>
-
 <template>
   <main class="layout">
     <div class="layout__content">

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,9 +14,9 @@ const router = createRouter({
       path: "/info",
       name: "info",
       component: () => import("@/pages/Info.vue"),
-      beforeEnter: (to, from) => {
-        if (!to.query?.id) {
-          router.push("/login");
+      beforeEnter: (_to, from) => {
+        if (!_to.query?.id || !useAuthStore().isAuthenticated) {
+          return { name: "login" };
         }
       },
     },

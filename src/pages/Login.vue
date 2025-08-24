@@ -6,6 +6,7 @@ import { useFetch } from "@/composables/useFetch";
 import { type User } from "@/types/user";
 import { normalizePhone } from "@/utils/normalize";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
 
 const router = useRouter();
 
@@ -39,6 +40,7 @@ const login = async (): Promise<void> => {
     return;
   }
 
+  useAuthStore().login();
   router.push({ path: "/info", query: { id: targetUser.id } });
 };
 </script>
@@ -73,7 +75,7 @@ const login = async (): Promise<void> => {
               <div class="login-page__field">
                 <BaseButton full-width> Login </BaseButton>
               </div>
-              <div v-if="error">{{ error }}</div>
+              <div class="login-page__error" v-if="error">{{ error }}</div>
             </form>
           </div>
         </div>
@@ -118,6 +120,10 @@ const login = async (): Promise<void> => {
     & + & {
       margin-top: 14px;
     }
+  }
+
+  &__error {
+    color: rgb(245, 79, 79);
   }
 }
 </style>
