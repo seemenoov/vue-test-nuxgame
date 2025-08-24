@@ -45,8 +45,13 @@ const updateValue = (e: Event) => {
   width: 100%;
   background-color: #fff;
   color: #353535;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 5px;
   font-size: 17px;
+  transition: 0.3s border-color linear;
+
+  &:focus {
+    border-color: #519945;
+  }
 }
 </style>
