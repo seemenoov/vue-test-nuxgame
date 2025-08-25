@@ -12,8 +12,8 @@ const router = useRouter();
 
 const { data, fetchData } = useFetch<User[]>();
 
-const username = ref<string>("Clementine Bauch");
-const phone = ref<string>("1-463-123-4447");
+const username = ref<string>("");
+const phone = ref<string>("");
 const error = ref<string>("");
 
 const login = async (): Promise<void> => {
